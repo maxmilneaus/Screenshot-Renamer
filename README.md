@@ -36,6 +36,22 @@ Automatically rename images using AI analysis and copy them to clipboard. Perfec
    ```
 
 ## Installation
+For the quickest setup, follow these steps in your terminal:
+
+1.  **Install Dependencies &amp; Build Helper**
+    ```bash
+    npm install
+    ```
+2.  **Configure the Application**
+    ```bash
+    npm run setup
+    ```
+3.  **Install as a Background Service**
+    ```bash
+    npm run install-service
+    ```
+
+---
 
 ### Prerequisites
 - Node.js 16+ 
