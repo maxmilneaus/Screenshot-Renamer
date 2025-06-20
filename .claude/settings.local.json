@@ -13,7 +13,8 @@
       "Bash(chmod:*)",
       "Bash(./build-helper.sh:*)",
       "Bash(rm:*)",
-      "Bash(npm run install-service:*)"
+      "Bash(npm run install-service:*)",
+      "Bash(npm start:*)"
     ],
     "deny": []
   }

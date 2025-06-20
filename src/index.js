@@ -4,6 +4,8 @@ const FolderWatcher = require('./folder-watcher');
 const config = require('./config');
 const geminiAnalyzer = require('./gemini-vision');
 const clipboardManager = require('./clipboard-manager');
+const Welcome = require('./welcome');
+const logger = require('./logger');
 
 class ScreenshotRenamer {
   constructor() {
@@ -12,48 +14,58 @@ class ScreenshotRenamer {
   }
 
   async start() {
-    console.log('Screenshot Renamer starting...');
+    logger.serviceEvent('starting');
     
     // Load and validate configuration
     const currentConfig = config.load();
-    const validationErrors = config.validate(currentConfig);
+    const validation = config.validate(currentConfig);
     
-    if (validationErrors.length > 0) {
-      console.error('Configuration errors:');
-      validationErrors.forEach(error => console.error(`  - ${error}`));
-      console.error('Please run setup first: npm run setup');
+    if (!validation.valid) {
+      Welcome.showError('Configuration errors detected:', validation.errors);
+      Welcome.showConfigHelp();
+      logger.error('Service failed to start due to configuration errors', null, { errors: validation.errors });
       process.exit(1);
     }
 
     // Test API connection
-    console.log('Testing Gemini API connection...');
+    logger.info('Testing Gemini API connection...');
     const apiTest = await geminiAnalyzer.testConnection();
     if (!apiTest.success) {
-      console.error('Gemini API test failed:', apiTest.error);
-      console.error('Please check your API key configuration');
+      Welcome.showError('Gemini API test failed', [
+        'Check your API key is correct',
+        'Ensure you have internet connection',
+        'Run setup again: npm run setup'
+      ]);
+      logger.apiError('connection_test', apiTest.error);
       process.exit(1);
     }
-    console.log('✓ Gemini API connection successful');
+    logger.info('Gemini API connection successful');
 
     // Test clipboard functionality
-    console.log('Testing clipboard functionality...');
+    logger.info('Testing clipboard functionality...');
     const clipboardTest = await clipboardManager.testClipboard();
     if (!clipboardTest.success) {
-      console.warn('⚠ Clipboard test failed:', clipboardTest.error);
-      console.warn('Image copying may not work properly');
+      logger.warn('Clipboard test failed, image copying may not work properly', clipboardTest.error);
     } else {
-      console.log('✓ Clipboard functionality working');
+      logger.info('Clipboard functionality working');
     }
 
     // Start file watcher
     this.watcher.start();
     this.isRunning = true;
 
-    console.log(`✓ Screenshot Renamer is running`);
-    console.log(`  Watching: ${currentConfig.watchFolder}`);
-    console.log(`  Clipboard copy: ${currentConfig.copyToClipboard ? 'enabled' : 'disabled'}`);
-    console.log(`  Notifications: ${currentConfig.showNotifications ? 'enabled' : 'disabled'}`);
-    console.log('Press Ctrl+C to stop');
+    // Show status in development mode, log in production
+    if (process.env.NODE_ENV !== 'production') {
+      Welcome.showStatus(currentConfig, true);
+      console.log('🍳 Ready to sizzle! Add images to your folder to see the magic!\n');
+      console.log('Press Ctrl+C to stop');
+    }
+    
+    logger.serviceEvent('started', {
+      watchFolder: currentConfig.watchFolder,
+      clipboardEnabled: currentConfig.copyToClipboard,
+      notificationsEnabled: currentConfig.showNotifications
+    });
 
     // Handle graceful shutdown
     process.on('SIGINT', () => this.stop());
@@ -62,37 +74,53 @@ class ScreenshotRenamer {
 
   stop() {
     if (this.isRunning) {
-      console.log('\nShutting down Screenshot Renamer...');
+      logger.serviceEvent('stopping');
       this.watcher.stop(); 
       this.isRunning = false;
-      console.log('✓ Screenshot Renamer stopped');
+      logger.serviceEvent('stopped');
       process.exit(0);
     }
   }
 
   async status() {
     const currentConfig = config.load();
-    const validationErrors = config.validate(currentConfig);
+    const validation = config.validate(currentConfig);
     
-    console.log('Screenshot Renamer Status:');
-    console.log('========================');
-    console.log(`Watch Folder: ${currentConfig.watchFolder}`);
-    console.log(`API Key: ${currentConfig.geminiApiKey ? '✓ Configured' : '✗ Not configured'}`);
-    console.log(`Clipboard Copy: ${currentConfig.copyToClipboard ? 'Enabled' : 'Disabled'}`);
-    console.log(`Notifications: ${currentConfig.showNotifications ? 'Enabled' : 'Disabled'}`);
+    // Show welcome and current status
+    Welcome.show();
     
-    if (validationErrors.length > 0) {
-      console.log('\nConfiguration Issues:');
-      validationErrors.forEach(error => console.log(`  ✗ ${error}`));
+    // Check if service is running
+    const { execSync } = require('child_process');
+    let isServiceRunning = false;
+    try {
+      execSync('launchctl list | grep screenshot-renamer', { stdio: 'pipe' });
+      isServiceRunning = true;
+    } catch (error) {
+      isServiceRunning = false;
+    }
+    
+    Welcome.showStatus(currentConfig, isServiceRunning);
+    
+    if (!validation.valid) {
+      Welcome.showError('Configuration Issues Found:', validation.errors);
+      Welcome.showConfigHelp();
     } else {
-      console.log('\n✓ Configuration is valid');
+      console.log('✅ Configuration is valid');
     }
 
     // Test API if configured
     if (currentConfig.geminiApiKey) {
-      console.log('\nTesting API connection...');
+      console.log('\n🧪 Testing API connection...');
       const apiTest = await geminiAnalyzer.testConnection();
-      console.log(`API Status: ${apiTest.success ? '✓ Working' : '✗ ' + apiTest.error}`);
+      if (apiTest.success) {
+        console.log('✅ API Status: Working perfectly!');
+      } else {
+        Welcome.showError('API connection failed', [
+          'Check your internet connection',
+          'Verify your API key is still valid',
+          'Run setup again: npm run setup'
+        ]);
+      }
     }
   }
 }
