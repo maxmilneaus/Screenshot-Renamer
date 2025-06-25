@@ -96,22 +96,6 @@ The workshop door remains open. The core mechanisms reside within `src/index.js`
 
 ```mermaid
 graph TD
-**Environment Compatibility**
-
-The setup process is designed to be robust and adaptable, ensuring compatibility across various environments:
-
-- ✅ **Terminal/TTY environments** - Full interactive experience
-- ✅ **Non-TTY environments** - Automatic fallback to command-line mode
-- ✅ **CI/CD environments** - Works with command-line arguments
-- ✅ **Remote SSH sessions** - Adapts to available capabilities
-- ✅ **Various shells** - bash, zsh, fish, etc.
-
-Before distributing, it is wise to test in a few different settings:
-- [ ] macOS Terminal
-- [ ] VS Code integrated terminal  
-- [ ] SSH sessions
-- [ ] CI/CD environments
-- [ ] Different Node.js versions (16+)
     A[User Takes Screenshot] --> B[Folder Watcher Detects File];
     B --> C{Selects AI Analyzer};
     C --> D[Gemini Cloud];
