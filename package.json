@@ -1,5 +1,5 @@
 {
-  "name": "image-rename",
+  "name": "screenshot-renamer",
   "version": "1.0.0",
   "description": "A utility for thoughtful image renaming with clipboard integration",
   "main": "src/index.js",

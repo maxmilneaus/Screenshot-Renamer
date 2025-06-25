@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Development files
+build-helper.sh
+copy-helper.swift
+copy-helper
+configure.js
+speed-test.js
+test-performance.js
+
+# Documentation (keep README.md)
+docs/
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Development configs
+.roocode
+.roo/
+.claude/
+.DS_Store
+.vscode/
+.idea/
+.github/
+
+# macOS service files
+scripts/com.user.screenshot-renamer.plist
+
+# Test files and outputs
+test-results/
+sandbox/
+coverage/
+*.lcov
+.nyc_output
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env*
+.screenshot-renamer-config.json
+
+# Build artifacts
+*.tgz
+dist/
+build/
+
+# Git
+.git/
+.gitignore
