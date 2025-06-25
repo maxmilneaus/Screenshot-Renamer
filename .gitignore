@@ -94,3 +94,8 @@ copy-helper
 test-results/
 # Sandbox or test directories
 sandbox/
+
+# Development and documentation directories
+docs/
+.roo/
+.claude/
