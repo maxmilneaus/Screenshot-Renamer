@@ -196,7 +196,7 @@ class Setup {
             type: 'input',
             name: 'lmstudioModel',
             message: '🧠 Model name within LM Studio:',
-            default: currentConfig.lmstudioModel || 'gemma3:4b'
+            default: currentConfig.lmstudioModel || 'google/gemma-3-4b'
           }
         ]);
         Object.assign(answers, lmstudioConfig);
@@ -339,6 +339,17 @@ class Setup {
     }
 
     console.log('\n✓ Configuration saved successfully!');
+
+    // In non-interactive mode, we'll skip the connection test,
+    // as services like LM Studio might not be running in a CI/test environment.
+    if (!this.isInteractive) {
+      console.log('\nSkipping connection test in non-interactive mode.');
+      Welcome.showSuccess(`
+Configuration is saved. You can test the connection by running setup again
+in an interactive terminal or by starting the service.
+      `);
+      return;
+    }
 
     // Test the configured provider
     const provider = answers.aiProvider;

@@ -53,7 +53,7 @@ const ConfigSchema = BaseConfigSchema.and(
         .default('http://localhost:1234'),
       lmstudioModel: z.string()
         .min(1, 'LM Studio model name is required')
-        .default('gemma3:4b'),
+        .default('google/gemma-3-4b'),
       lmstudioMaxTokens: z.number()
         .int()
         .min(10)
@@ -93,7 +93,7 @@ class Config {
       maxRetries: 3,
       retryDelay: 5000,
       lmstudioBaseUrl: 'http://localhost:1234',
-      lmstudioModel: 'lmstudio-community/gemma-3-4b-it-qat',
+      lmstudioModel: 'google/gemma-3-4b',
       lmstudioMaxTokens: 50,
       lmstudioTemperature: 0.1,
       aiProvider: 'lmstudio',

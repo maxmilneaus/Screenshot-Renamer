@@ -74,22 +74,31 @@ class FolderWatcher {
         return;
       }
 
-      // Skip if already processed (has AI-generated name pattern)
-      if (fileName.match(/^[a-z_]+(_\d+)?$/)) {
+      // Skip if already processed (has a clear AI-generated name pattern)
+      // This now requires at least one underscore to be considered "processed"
+      if (fileName.includes('_') && /^[a-z_]+(_\d+)?$/.test(fileName)) {
         logger.info(`⏭️ Skipping already processed file: ${path.basename(filePath)}`);
         return;
       }
 
       if (this.processingFiles.has(filePath)) {
-        return; // Already processing this file
+        logger.warn(`File is already being processed, skipping: ${path.basename(filePath)}`);
+        return;
       }
 
       this.processingFiles.add(filePath);
       
-      logger.info(`New image detected: ${path.basename(filePath)}`);
+      // Debounce to handle rapid-fire events
+      await this.delay(250);
+
+      // Verify file still exists before processing
+      if (!fs.existsSync(filePath)) {
+        logger.warn(`File no longer exists, likely already processed: ${path.basename(filePath)}`);
+        this.processingFiles.delete(filePath);
+        return;
+      }
       
-      // Wait a bit to ensure file is fully written
-      await this.delay(500);
+      logger.info(`New image detected: ${path.basename(filePath)}`);
       
       // Reload config to pick up any changes
       this.reloadConfig();
@@ -146,18 +155,22 @@ class FolderWatcher {
       
       // Rename file
       if (filePath !== newFilePath) {
+        logger.info(`Attempting to rename: ${filePath} -> ${newFilePath}`);
         try {
           await fs.promises.rename(filePath, newFilePath);
-          logger.info(`File renamed: ${path.basename(filePath)} → ${newFileName}`);
+          logger.info(`✅ File renamed successfully: ${path.basename(filePath)} → ${newFileName}`);
 
           // Copy to clipboard if enabled
           if (this.config.copyToClipboard) {
+            logger.info('📋 Copying to clipboard...');
             await clipboardManager.copyImageToClipboard(newFilePath);
-            logger.info('Image copied to clipboard');
+            logger.info('✅ Image copied to clipboard');
           }
         } catch (renameError) {
-          logger.error(`Error renaming file: ${filePath} to ${newFilePath}`, renameError);
+          logger.error(`❌ Error renaming file: ${filePath} to ${newFilePath}`, renameError);
         }
+      } else {
+        logger.warn(`Skipping rename, as new and old file paths are identical: ${filePath}`);
       }
       
     } catch (error) {
@@ -177,10 +190,14 @@ class FolderWatcher {
       .replace(/^_|_$/g, '') // Remove leading/trailing underscores
       .substring(0, 50); // Shorter length
     
+    logger.debug(`Cleaned analysis to: "${fileName}"`);
+
     // Only add timestamp if filename would be too generic or empty
     if (!fileName || fileName.length < 3 || fileName === 'image' || fileName === 'screenshot') {
       const timestamp = Date.now();
-      return `${fileName || 'image'}_${timestamp}${extension}`;
+      const newName = `${fileName || 'image'}_${timestamp}${extension}`;
+      logger.warn(`Analysis result was generic or empty. Using timestamp-based name: ${newName}`);
+      return newName;
     }
     
     // Handle potential filename conflicts
@@ -189,17 +206,22 @@ class FolderWatcher {
     const dir = this.config.watchFolder;
     
     while (true) {
+      const fullPath = path.join(dir, newFileName);
+      logger.debug(`Checking for file existence: ${fullPath}`);
       try {
-        await fs.promises.access(path.join(dir, newFileName));
+        await fs.promises.access(fullPath);
         // If access doesn't throw, file exists. Try next name.
         counter++;
         newFileName = `${fileName}_${counter}${extension}`;
+        logger.warn(`File conflict found. Trying next name: ${newFileName}`);
       } catch (e) {
         // If access throws, file does not exist. We're good.
+        logger.debug(`No file conflict found for: ${newFileName}`);
         break;
       }
     }
     
+    logger.info(`Generated new filename: ${newFileName}`);
     return newFileName;
   }
 

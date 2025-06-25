@@ -97,6 +97,24 @@ program
     }
   });
 
+program
+  .command('install-service')
+  .description('Install the application as a background service (macOS only).')
+  .action(() => {
+    const ServiceInstaller = require('../scripts/install');
+    const installer = new ServiceInstaller();
+    installer.install();
+  });
+
+program
+  .command('uninstall-service')
+  .description('Uninstall the background service.')
+  .action(() => {
+    const ServiceUninstaller = require('../scripts/uninstall');
+    const uninstaller = new ServiceUninstaller();
+    uninstaller.uninstall();
+  });
+
 // Default action - run start command
 program.action(async () => {
   const renamer = new ScreenshotRenamer();

@@ -10,7 +10,10 @@
     "start": "node src/cli.js start",
     "dev": "node src/cli.js start --dev",
     "setup": "node src/cli.js setup",
-    "test": "node test-performance.js"
+    "test": "node test-performance.js",
+    "test:env": "node scripts/test-env.js",
+    "install-service": "node src/cli.js install-service",
+    "uninstall-service": "node src/cli.js uninstall-service"
   },
   "keywords": [
     "image",
@@ -30,17 +33,18 @@
     "url": "https://github.com/maxmilneaus/Screenshot-Renamer/issues"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
-    "chalk": "^5.4.1",
-    "chokidar": "^4.0.1",
-    "commander": "^12.1.0",
-    "inquirer": "^12.0.0",
-    "ollama": "^0.5.16",
-    "pino": "^9.5.0",
-    "zod": "^3.25.67"
+    "@google/generative-ai": "0.21.0",
+    "chalk": "4.1.2",
+    "chokidar": "4.0.1",
+    "commander": "12.1.0",
+    "inquirer": "8.2.6",
+    "node-fetch": "^2.7.0",
+    "ollama": "0.5.16",
+    "pino": "9.5.0",
+    "zod": "3.25.67"
   },
   "devDependencies": {
-    "pino-pretty": "^13.0.0"
+    "pino-pretty": "13.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
