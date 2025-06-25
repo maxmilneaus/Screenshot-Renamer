@@ -1,0 +1,25 @@
+{
+  "embedding": {
+    "provider": "ollama",
+    "baseUrl": "http://localhost:11434",
+    "model": "nomic-embed-text"
+  },
+  "vectorDb": {
+    "provider": "qdrant",
+    "url": "http://localhost:6333"
+  },
+  "indexing": {
+    "chunkSize": 500,
+    "chunkOverlap": 100,
+    "exclude": [
+      "node_modules/**",
+      ".git/**",
+      "*.log",
+      "dist/**",
+      "build/**",
+      "sandbox/**",
+      "context/**",
+      "docs/**"
+    ]
+  }
+}

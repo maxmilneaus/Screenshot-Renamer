@@ -1,7 +1,8 @@
-const { execSync } = require('child_process');
 const fs = require('fs');
+const { execSync } = require('child_process');
 const path = require('path');
 const logger = require('./logger');
+const { executeAppleScript, executeCommand } = require('./utils/macos-helpers');
 
 class ClipboardManager {
   constructor() {
@@ -70,13 +71,12 @@ class ClipboardManager {
       
       // Check if helper exists
       if (!fs.existsSync(helperPath)) {
-        console.warn('Swift copy-helper not found, falling back to other methods');
+        logger.warn('Swift copy-helper not found, falling back to other methods');
         return false;
       }
 
       // Execute the Swift helper
-      execSync(`"${helperPath}" "${imagePath}"`, {
-        stdio: 'pipe',
+      executeCommand(`"${helperPath}" "${imagePath}"`, {
         timeout: 10000
       });
 
@@ -107,9 +107,8 @@ class ClipboardManager {
         delay 0.1
       `;
 
-      execSync(`osascript -e '${script}'`, { 
-        stdio: 'pipe',
-        timeout: 10000 
+      executeAppleScript(script, {
+        timeout: 10000
       });
 
       logger.debug('Finder UI automation executed successfully');
@@ -144,9 +143,8 @@ class ClipboardManager {
           end tell
         `;
 
-        execSync(`osascript -e '${fallbackScript}'`, { 
-          stdio: 'pipe',
-          timeout: 10000 
+        executeAppleScript(fallbackScript, {
+          timeout: 10000
         });
 
         logger.debug('AppleScript fallback executed successfully');
@@ -181,8 +179,7 @@ class ClipboardManager {
       }
 
       // Use pbcopy with specific image format
-      execSync(`cat "${imagePath}" | pbcopy -Prefer ${mimeType}`, {
-        stdio: 'pipe',
+      executeCommand(`cat "${imagePath}" | pbcopy -Prefer ${mimeType}`, {
         timeout: 10000
       });
 
@@ -223,7 +220,7 @@ class ClipboardManager {
     }
 
     try {
-      execSync(`echo "${text}" | pbcopy`, { stdio: 'pipe' });
+      execSync(`echo '${text}' | pbcopy`, { stdio: 'pipe' });
       return true;
     } catch (error) {
       logger.error('Failed to copy text to clipboard', error);

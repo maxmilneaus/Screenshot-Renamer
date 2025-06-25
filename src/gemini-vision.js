@@ -1,41 +1,51 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const fs = require('fs');
-const path = require('path');
-const config = require('./config');
+const logger = require('./logger');
+const { getMimeType, cleanFilename, getFallbackName } = require('./ai-utils');
 
 class GeminiVisionAnalyzer {
-  constructor() {
+  constructor(config = null) {
     this.genAI = null;
     this.model = null;
-    this.initializeAPI();
+    this.config = config;
+    
+    if (config) {
+      this.initializeAPI();
+    }
   }
 
   initializeAPI() {
-    const apiKey = config.get('geminiApiKey');
+    if (!this.config) {
+      logger.error('No configuration provided to GeminiVisionAnalyzer');
+      return;
+    }
+
+    const apiKey = this.config.geminiApiKey;
     if (!apiKey) {
-      console.error('Gemini API key not configured');
+      logger.error('Gemini API key not configured');
       return;
     }
 
     try {
       this.genAI = new GoogleGenerativeAI(apiKey);
-      this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-      console.log('Gemini API initialized successfully');
+      const modelName = this.config.geminiModel || 'gemini-2.0-flash-exp';
+      this.model = this.genAI.getGenerativeModel({ model: modelName });
+      logger.info('Gemini API initialized successfully');
     } catch (error) {
-      console.error('Failed to initialize Gemini API:', error);
+      logger.error('Failed to initialize Gemini API:', error);
     }
   }
 
   async analyzeImage(imagePath) {
     if (!this.model) {
-      console.error('Gemini API not initialized');
+      logger.error('Gemini API not initialized');
       return null;
     }
 
     try {
       // Read the image file
       const imageBuffer = fs.readFileSync(imagePath);
-      const mimeType = this.getMimeType(imagePath);
+      const mimeType = getMimeType(imagePath);
       
       // Prepare the image data for Gemini
       const imageParts = [{
@@ -59,54 +69,19 @@ class GeminiVisionAnalyzer {
       const text = response.text().trim();
 
       // Clean up the response
-      const cleanedText = this.cleanFilename(text);
+      const cleanedText = cleanFilename(text);
       
-      console.log(`AI Analysis: "${cleanedText}"`);
+      logger.info(`AI Analysis: "${cleanedText}"`);
       return cleanedText;
 
     } catch (error) {
-      console.error('Error analyzing image with Gemini:', error);
+      logger.error('Error analyzing image with Gemini:', error);
       
       // Fallback to timestamp-based naming
-      return this.getFallbackName(imagePath);
+      return getFallbackName(imagePath);
     }
   }
 
-  getMimeType(filePath) {
-    const ext = path.extname(filePath).toLowerCase();
-    const mimeTypes = {
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.gif': 'image/gif',
-      '.webp': 'image/webp'
-    };
-    
-    return mimeTypes[ext] || 'image/jpeg';
-  }
-
-  cleanFilename(text) {
-    return text
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '_') // Replace spaces with underscores
-      .replace(/_+/g, '_') // Remove multiple underscores
-      .replace(/^_|_$/g, '') // Remove leading/trailing underscores
-      .substring(0, 50) // Limit length
-      || 'analyzed_image'; // Fallback if cleaning results in empty string
-  }
-
-  getFallbackName(imagePath) {
-    const basename = path.basename(imagePath, path.extname(imagePath));
-    
-    // If it looks like a screenshot, use that pattern
-    if (basename.toLowerCase().includes('screenshot')) {
-      return `screenshot_${Date.now()}`;
-    }
-    
-    // Generic fallback
-    return `image_${Date.now()}`;
-  }
 
   // Method to test API connection
   async testConnection() {
@@ -133,11 +108,11 @@ class GeminiVisionAnalyzer {
     }
   }
 
-  // Update API key and reinitialize
-  updateAPIKey(newApiKey) {
-    config.update({ geminiApiKey: newApiKey });
+  // Update configuration and reinitialize
+  updateConfig(newConfig) {
+    this.config = { ...this.config, ...newConfig };
     this.initializeAPI();
   }
 }
 
-module.exports = new GeminiVisionAnalyzer();
+module.exports = GeminiVisionAnalyzer;

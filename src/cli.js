@@ -7,24 +7,24 @@ const Setup = require('./setup');
 
 program
   .name('screenshot-renamer')
-  .description('AI-powered automatic image renaming with clipboard integration')
+  .description('A utility for thoughtful image renaming with clipboard integration.')
   .version('1.0.0');
 
 program
   .command('start')
-  .description('Start the image renaming service')
-  .option('-d, --dev', 'Run in development mode with verbose logging')
+  .description('Initiate the image renaming service.')
+  .option('-d, --dev', 'Operate in development mode, providing detailed observations.')
   .action(async (options) => {
     const renamer = new ScreenshotRenamer();
     if (options.dev) {
-      console.log('Running in development mode...');
+      console.log('Operating in development mode...');
     }
     await renamer.start();
   });
 
 program
   .command('status')
-  .description('Show current configuration and service status')
+  .description('Inquire about the current configuration and service state.')
   .action(async () => {
     const renamer = new ScreenshotRenamer();
     await renamer.status();
@@ -32,7 +32,7 @@ program
 
 program
   .command('setup')
-  .description('Run interactive setup to configure the service')
+  .description('Engage the interactive process to configure the utility.')
   .action(async () => {
     const setup = new Setup();
     await setup.run();
@@ -40,12 +40,12 @@ program
 
 program
   .command('config')
-  .description('Manage configuration settings')
-  .option('--folder <path>', 'Set the folder to watch')
-  .option('--api-key <key>', 'Set the Gemini API key')
-  .option('--clipboard <true|false>', 'Enable/disable clipboard copying')
-  .option('--notifications <true|false>', 'Enable/disable notifications')
-  .option('--show', 'Show current configuration')
+  .description('Manage the utility\'s operational settings.')
+  .option('--folder <path>', 'Designate the folder to observe.')
+  .option('--api-key <key>', 'Set the Gemini API key.')
+  .option('--clipboard <true|false>', 'Enable or disable clipboard integration.')
+  .option('--notifications <true|false>', 'Enable or disable notifications.')
+  .option('--show', 'Display the current configuration.')
   .action((options) => {
     if (options.show) {
       const currentConfig = config.load();
@@ -61,32 +61,40 @@ program
     if (options.notifications) updates.showNotifications = options.notifications === 'true';
 
     if (Object.keys(updates).length === 0) {
-      console.log('No configuration changes specified. Use --help for options.');
+      console.log('No configuration adjustments specified. Consult --help for available options.');
       return;
     }
 
     const success = config.update(updates);
     if (success) {
-      console.log('✓ Configuration updated successfully');
+      console.log('✓ Configuration updated successfully.');
     } else {
-      console.error('✗ Failed to update configuration');
+      logger.error('✗ Failed to update configuration.');
     }
   });
 
 program
   .command('test')
-  .description('Test API connection and clipboard functionality')
+  .description('Verify AI companion connection and clipboard functionality.')
   .action(async () => {
-    const geminiAnalyzer = require('./gemini-vision');
+    const config = require('./config');
+    const AnalyzerFactory = require('./analyzers/analyzer-factory');
     const clipboardManager = require('./clipboard-manager');
 
-    console.log('Testing Gemini API connection...');
-    const apiTest = await geminiAnalyzer.testConnection();
-    console.log(`API: ${apiTest.success ? '✓ Working' : '✗ ' + apiTest.error}`);
+    try {
+      const currentConfig = config.load();
+      const analyzer = AnalyzerFactory.createAnalyzer(currentConfig);
+      
+      console.log(`Testing ${currentConfig.aiProvider || 'gemini'} connection...`);
+      const apiTest = await analyzer.testConnection();
+      console.log(`AI Companion: ${apiTest.success ? '✓ Operating' : '✗ ' + apiTest.error}`);
 
-    console.log('Testing clipboard functionality...');
-    const clipboardTest = await clipboardManager.testClipboard();
-    console.log(`Clipboard: ${clipboardTest.success ? '✓ Working' : '✗ ' + clipboardTest.error}`);
+      console.log('Testing clipboard integration...');
+      const clipboardTest = await clipboardManager.testClipboard();
+      console.log(`Clipboard: ${clipboardTest.success ? '✓ Operating' : '✗ ' + clipboardTest.error}`);
+    } catch (error) {
+      console.log(`✗ Configuration issue: ${error.message}`);
+    }
   });
 
 // Default action - run start command

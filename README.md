@@ -1,260 +1,107 @@
-# Screenshot Renamer
+# The Screenshot Renamer: A Quiet Utility
 
-Automatically rename images using AI analysis and copy them to clipboard. Perfect for organizing screenshots and images with meaningful, descriptive names.
+For the curiously organized. This small utility observes a designated folder for new screenshots, considers their content, and bestows upon them a more thoughtful name.
 
-## Features
-
-- 🤖 **AI-Powered Naming**: Uses Google Gemini Vision to analyze images and generate descriptive filenames
-- 📋 **Clipboard Integration**: Automatically copies renamed images to clipboard for instant pasting
-- 👀 **Folder Monitoring**: Watches any folder for new images and processes them automatically
-- 🔄 **Background Service**: Runs silently in the background like CleanMyMac or similar utilities
-- 🔧 **Easy Configuration**: Simple setup with configurable options
-- 📱 **macOS Optimized**: Built specifically for macOS with native notifications
-
-## Quick Start
-
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-2. **Set up configuration**:
-   ```bash
-   # Interactive setup (when available)
-   npm run setup
-   
-   # Non-interactive setup with command line arguments
-   npm run setup -- --api-key "YOUR_GEMINI_API_KEY" --folder "/path/to/watch"
-   
-   # Or use the simple configure script
-   node configure.js YOUR_GEMINI_API_KEY
-   ```
-
-3. **Start the service**:
-   ```bash
-   npm start
-   ```
-
-## Installation
-For the quickest setup, follow these steps in your terminal:
-
-1.  **Install Dependencies &amp; Build Helper**
-    ```bash
-    npm install
-    ```
-2.  **Configure the Application**
-    ```bash
-    npm run setup
-    ```
-3.  **Install as a Background Service**
-    ```bash
-    npm run install-service
-    ```
+It transforms `Screenshot 2024-06-23 at 12.30.00 PM.png` into `login_screen_with_error_message.png`. And then, with a subtle gesture, it places the newly named image onto your clipboard.
 
 ---
 
-### Prerequisites
-- Node.js 16+ 
-- macOS (required for clipboard functionality)
-- Google Gemini API key ([Get one here](https://makersuite.google.com/app/apikey))
+### A Brief Demonstration
 
-### Setup Steps
+*(Imagine a silent, looping GIF here showing: a generic screenshot appearing, a terminal log, the file renaming itself, and a quiet macOS notification.)*
 
-1. **Clone and install**:
-   ```bash
-   git clone <repository-url>
-   cd screenshot-renamer
-   npm install
-   ```
+---
 
-2. **Run setup**:
-   
-   **Option A: Interactive Setup** (when running in a terminal)
-   ```bash
-   npm run setup
-   ```
-   
-   **Option B: Command Line Setup** (works anywhere)
-   ```bash
-   npm run setup -- --api-key "YOUR_GEMINI_API_KEY" --folder "/path/to/folder"
-   ```
-   
-   **Option C: Simple Configuration** (quickest)
-   ```bash
-   node configure.js YOUR_GEMINI_API_KEY
-   ```
-   
-   All methods will configure:
-   - Folder to monitor (default: Desktop or screenshot location)
-   - Google Gemini API key  
-   - Clipboard and notification preferences
+### Inviting the Utility to Your Workshop
 
-3. **Test the configuration**:
-   ```bash
-   npm run start -- test
-   ```
-
-## Usage
-
-### Manual Mode
-```bash
-# Start the service (runs until stopped)
-npm start
-
-# Check status and configuration
-npm run start -- --status
-
-# Run setup again
-npm run setup
-```
-
-### Background Service Mode
-```bash
-# Install as macOS background service (auto-starts on login)
-npm run install-service
-
-# Check service status
-node scripts/install.js status
-
-# View service logs
-node scripts/install.js logs
-
-# Uninstall background service
-npm run uninstall-service
-```
-
-### Command Line Interface
-```bash
-# Global installation
-npm install -g .
-
-# Then use anywhere
-screenshot-renamer start
-screenshot-renamer status
-screenshot-renamer setup
-screenshot-renamer config --folder "/path/to/folder"
-screenshot-renamer test
-```
-
-## Configuration
-
-Configuration is stored in `~/.screenshot-renamer-config.json`:
-
-```json
-{
-  "watchFolder": "/Users/username/Desktop",
-  "geminiApiKey": "your-api-key-here",
-  "copyToClipboard": true,
-  "showNotifications": true,
-  "logLevel": "info"
-}
-```
-
-### Configuration Options
-
-- `watchFolder`: Path to monitor for new images
-- `geminiApiKey`: Your Google Gemini API key
-- `copyToClipboard`: Automatically copy renamed images to clipboard
-- `showNotifications`: Show macOS notifications when images are renamed
-- `logLevel`: Logging verbosity (info, warn, error)
-
-## How It Works
-
-1. **Monitor**: Watches your specified folder for new image files (PNG, JPG, GIF, WebP)
-2. **Analyze**: Uses Google Gemini Vision API to understand image content
-3. **Rename**: Generates descriptive filename based on AI analysis
-4. **Copy**: Automatically copies the renamed image to your clipboard
-5. **Notify**: Shows a brief notification with the new filename
-
-### Example Workflow
-
-1. You take a screenshot → `Screenshot 2024-06-20 at 10.30.15 AM.png`
-2. AI analyzes the image → Detects "login screen for mobile app"
-3. File gets renamed → `login_screen_mobile_app_1718901015123.png`
-4. Image is copied to clipboard → Ready to paste anywhere
-5. Notification shows → "Renamed & copied: login_screen_mobile_app_1718901015123.png"
-
-## Supported Formats
-
-- PNG (most common for screenshots)
-- JPEG/JPG
-- GIF
-- WebP
-
-## Folder Suggestions
-
-The setup will auto-detect common folders:
-- macOS Screenshot location (usually Desktop)
-- Desktop
-- Downloads  
-- Pictures
-- Custom OneDrive/Dropbox paths
-
-## Troubleshooting
-
-### API Issues
-```bash
-# Test API connection
-screenshot-renamer test
-
-# Update API key
-screenshot-renamer config --api-key "new-key-here"
-```
-
-### Clipboard Issues
-- Ensure you're running on macOS
-- Check that accessibility permissions are granted if needed
-- Test with: `screenshot-renamer test`
-
-### Service Issues
-```bash
-# Check if service is running
-launchctl list | grep screenshot-renamer
-
-# View service logs
-tail -f ~/Library/Logs/screenshot-renamer.log
-
-# Restart service
-npm run uninstall-service && npm run install-service
-```
-
-### Configuration Issues
-```bash
-# Show current config
-screenshot-renamer config --show
-
-# Reset to defaults
-rm ~/.screenshot-renamer-config.json
-npm run setup
-```
-
-## Development
+This instrument requires Node.js and a moment of your time. Open your terminal and issue these commands. The utility will then prepare itself and ask a few gentle questions.
 
 ```bash
-# Run in development mode with verbose logging
+git clone https://github.com/LilSizzles/screenshot-renamer.git && cd screenshot-renamer && npm install && npm run setup
+```
+
+Once the initial preparations are complete, you may awaken the service to observe its work.
+
+```bash
 npm run dev
-
-# Run without installing as service
-npm start -- --dev
 ```
 
-## License
+Now, simply capture a screenshot. The application will, with quiet diligence, take notice.
 
-MIT License - see LICENSE file for details.
+### The Inner Workings: How It Perceives
 
-## Contributing
+This utility employs an AI to discern the essence of your images. You are presented with three distinct approaches:
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly on macOS
-5. Submit a pull request
+*   **Gemini**: A swift and capable intellect from Google, residing in the cloud. It requires an internet connection and a modest API key.
+*   **LM Studio**: An intellect that resides upon your own machine, for those who prefer a local arrangement. It requires the LM Studio application.
+*   **Ollama**: Another fine choice for local AI models. It is known for its light touch and ease of management.
+*    *Ollama is significantly slower then LM Studio - exploration as to why is welcome. I use only LM Studio.*
 
-## API Costs
+These arrangements can be revisited at any time by invoking `npm run setup`.
 
-Google Gemini API has generous free tiers:
-- 15 requests per minute
-- 1,500 requests per day
-- 1 million tokens per month
+### For a More Permanent Arrangement
 
-For typical screenshot usage, this should cover hundreds of renames per day at no cost.
+Should you find this utility agreeable, you may invite it to reside permanently. This will establish it as a background service, awakening automatically upon your login.
+
+*   **To Install**: `npm run install-service`
+*   **To Uninstall**: `npm run uninstall-service`
+*   **To Inquire**: `npm run status`
+
+### The Finer Adjustments
+
+For those who appreciate the precise calibration of their instruments, the utility's settings are housed within a simple ledger at `~/.screenshot-renamer-config.json`. This file may be edited directly, or one may prefer the more refined approach of the `config` command.
+
+```bash
+# To observe the current settings
+npx screenshot-renamer config --show
+
+# To adjust the observed folder
+npx screenshot-renamer config --folder "/path/to/your/folder"
+```
+
+A complete inventory of settings, generally self-explanatory, can be found within the configuration file itself.
+
+### On Contributing to the Craft
+
+This utility represents an initial foray into crafting tools for the wider community. The workshop door remains open for those who wish to contribute their skills. As first swing of my axe this Apps fundamentals may be unrefined. The core mechanisms reside within `src/index.js` and `src/folder-watcher.js`. The AI integrations are housed in `src/analyzers/`. Engaging `npm run dev` will illuminate the inner workings with necessary detail for development. An extra set of hands is always appreciated.
+
+```mermaid
+graph TD
+    A[User Takes Screenshot] --> B[Folder Watcher Detects File];
+    B --> C{Selects AI Analyzer};
+    C --> D[Gemini Cloud];
+    C --> E[LM Studio Local];
+    C --> I[Ollama Local];
+    D --> F[File is Renamed];
+    E --> F;
+    I --> F;
+    F --> G[Copied to Clipboard];
+    F --> H[Notification Sent];
+```
+---
+
+A quiet creation by [Max Milne](https://github.com/maxmilneaus).
+
+### A Note on Performance
+
+We conducted a few quiet observations on a MacBook Pro (M1 Max - 32gb - 24gpu) to discern the subtle differences between the two "brains." Your own results will, of course, exhibit their own unique character.
+
+**☁️ Cloud Processing (Google Gemini)**
+- **Model**: `gemini-2.5-flash-lite-preview-06-17`
+- **Speed**: Approximately 4.5 seconds on average.
+- **Quality**: Tends to offer highly descriptive and precise naming.
+- **Cost**: The complimentary tier is quite accommodating, likely sufficient for many daily renames.
+
+**🏠 Local Processing (LM Studio)**
+- **Model**: `google/gemma-3-4b`
+- **Speed**: Approximately 7 seconds on average.
+- **Quality**: Provides a good, foundational naming.
+- **Cost**: Free, once the local arrangement is established.
+
+**🦙 Local Processing (Ollama)**
+- **Model**: `google/gemma-3-4b`
+- **Speed**: Approximately 27 seconds on average.
+- **Quality**: Provides a good, thought slower, foundational naming.
+- **Cost**: Free, once the local arrangement is established.
+
+**Built with help from Claude Code, Roo Code and Gemini 2.5 pro**

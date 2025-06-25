@@ -14,7 +14,18 @@
       "Bash(./build-helper.sh:*)",
       "Bash(rm:*)",
       "Bash(npm run install-service:*)",
-      "Bash(npm start:*)"
+      "Bash(npm start:*)",
+      "mcp__filesystem__list_directory",
+      "Bash(cat:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(kill:*)",
+      "Bash(npm run dev:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(curl:*)",
+      "Bash(timeout:*)"
     ],
     "deny": []
   }

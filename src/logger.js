@@ -57,7 +57,10 @@ class Logger {
     }
 
     this.logger = pino(options);
-    this.info('Logger initialized', { level: logLevel, background: isBackgroundService });
+    // Only show initialization message for background services or debug mode
+    if (isBackgroundService || logLevel === 'debug') {
+      this.info('Logger initialized', { level: logLevel, background: isBackgroundService });
+    }
   }
 
   getLogLevel() {
@@ -96,12 +99,16 @@ class Logger {
     }
   }
 
+  formatTime(ms) {
+    return `${(ms / 1000).toFixed(1)} seconds`;
+  }
+
   // Special methods for key events
   fileProcessed(originalName, newName, timeTaken) {
     this.info('File processed successfully', {
       originalName,
       newName,
-      timeTaken: `${timeTaken}ms`,
+      timeTaken: this.formatTime(timeTaken),
       event: 'file_processed'
     });
   }
@@ -110,7 +117,7 @@ class Logger {
     this.info('AI analysis completed', {
       filename,
       analysis,
-      timeTaken: `${timeTaken}ms`,
+      timeTaken: this.formatTime(timeTaken),
       event: 'ai_analysis'
     });
   }

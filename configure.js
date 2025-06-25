@@ -8,7 +8,7 @@ const configPath = path.join(os.homedir(), '.screenshot-renamer-config.json');
 
 if (process.argv.length < 3) {
   console.log('Usage: node configure.js <GEMINI_API_KEY>');
-  console.log('Example: node configure.js AIzaSyB...');
+  console.log('Example: node configure.js YOUR_API_KEY_HERE');
   process.exit(1);
 }
 
@@ -26,7 +26,7 @@ try {
   config.geminiApiKey = apiKey;
   
   // Set defaults if not present
-  config.watchFolder = config.watchFolder || '/Users/maxmilne/Library/CloudStorage/OneDrive-SwinburneUniversity/0. Inbox/Screenshots';
+  config.watchFolder = config.watchFolder || path.join(os.homedir(), 'Desktop');
   config.copyToClipboard = config.copyToClipboard !== undefined ? config.copyToClipboard : true;
   config.showNotifications = config.showNotifications !== undefined ? config.showNotifications : true;
   config.logLevel = config.logLevel || 'info';
