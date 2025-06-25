@@ -25,7 +25,8 @@
       "Bash(grep:*)",
       "WebFetch(domain:ai.google.dev)",
       "Bash(curl:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

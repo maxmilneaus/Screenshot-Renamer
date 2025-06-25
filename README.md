@@ -6,27 +6,55 @@ It transforms `Screenshot 2024-06-23 at 12.30.00 PM.png` into `login_screen_with
 
 ---
 
-### A Brief Demonstration
-
-*(Imagine a silent, looping GIF here showing: a generic screenshot appearing, a terminal log, the file renaming itself, and a quiet macOS notification.)*
-
----
-
 ### Inviting the Utility to Your Workshop
 
-This instrument requires Node.js and a moment of your time. Open your terminal and issue these commands. The utility will then prepare itself and ask a few gentle questions.
+To begin, a few preparations are in order. This utility relies on Node.js and, for cloud-based AI, an API key.
+
+**1. Get an API Key (Optional)**
+
+If you wish to use a cloud-based AI like Google Gemini, you must first acquire an API key. A visit to the [Google AI Studio](https://makersuite.google.com/app/apikey) will provide one. For local models like LM Studio or Ollama, this step is not required.
+
+**2. Install the Utility**
+
+Invite the utility's source code to your local machine and install its dependencies.
 
 ```bash
-git clone https://github.com/LilSizzles/screenshot-renamer.git && cd screenshot-renamer && npm install && npm run setup
+git clone https://github.com/LilSizzles/screenshot-renamer.git
+cd screenshot-renamer
+npm install
 ```
 
-Once the initial preparations are complete, you may awaken the service to observe its work.
+**3. Configure the Utility**
+
+Next, you must introduce yourself to the utility. It offers several methods to accommodate any environment. Choose the one that best suits your needs.
+
+*   **Method A: Interactive Setup (Recommended)**
+    For a guided experience, use the `setup` command. It will ask for the necessary details.
+    ```bash
+    npm run setup
+    ```
+
+*   **Method B: Command-Line Setup**
+    For automated or non-interactive environments, you may provide the configuration directly.
+    ```bash
+    npm run setup -- --api-key "YOUR_KEY" --folder "/path/to/your/screenshots"
+    ```
+
+*   **Method C: Quick Configuration**
+    For the fastest setup, you can use the `configure.js` script with just your API key.
+    ```bash
+    node configure.js YOUR_API_KEY
+    ```
+
+**4. Test the Service**
+
+With the setup complete, you can awaken the service for a test run.
 
 ```bash
 npm run dev
 ```
 
-Now, simply capture a screenshot. The application will, with quiet diligence, take notice.
+Drop a screenshot into your designated folder. The utility will notice and act accordingly.
 
 ### The Inner Workings: How It Perceives
 
@@ -61,12 +89,29 @@ npx screenshot-renamer config --folder "/path/to/your/folder"
 
 A complete inventory of settings, generally self-explanatory, can be found within the configuration file itself.
 
-### On Contributing to the Craft
 
-This utility represents an initial foray into crafting tools for the wider community. The workshop door remains open for those who wish to contribute their skills. As first swing of my axe this Apps fundamentals may be unrefined. The core mechanisms reside within `src/index.js` and `src/folder-watcher.js`. The AI integrations are housed in `src/analyzers/`. Engaging `npm run dev` will illuminate the inner workings with necessary detail for development. An extra set of hands is always appreciated.
+**Contributing**
+
+The workshop door remains open. The core mechanisms reside within `src/index.js` and `src/folder-watcher.js`. The AI integrations are housed in `src/analyzers/`. Engaging `npm run dev` will illuminate the inner workings with necessary detail for development. An extra set of hands is always appreciated.
 
 ```mermaid
 graph TD
+**Environment Compatibility**
+
+The setup process is designed to be robust and adaptable, ensuring compatibility across various environments:
+
+- ✅ **Terminal/TTY environments** - Full interactive experience
+- ✅ **Non-TTY environments** - Automatic fallback to command-line mode
+- ✅ **CI/CD environments** - Works with command-line arguments
+- ✅ **Remote SSH sessions** - Adapts to available capabilities
+- ✅ **Various shells** - bash, zsh, fish, etc.
+
+Before distributing, it is wise to test in a few different settings:
+- [ ] macOS Terminal
+- [ ] VS Code integrated terminal  
+- [ ] SSH sessions
+- [ ] CI/CD environments
+- [ ] Different Node.js versions (16+)
     A[User Takes Screenshot] --> B[Folder Watcher Detects File];
     B --> C{Selects AI Analyzer};
     C --> D[Gemini Cloud];
@@ -96,12 +141,18 @@ We conducted a few quiet observations on a MacBook Pro (M1 Max - 32gb - 24gpu) t
 - **Model**: `google/gemma-3-4b`
 - **Speed**: Approximately 7 seconds on average.
 - **Quality**: Provides a good, foundational naming.
-- **Cost**: Free, once the local arrangement is established.
+- **Cost**: Free.
 
 **🦙 Local Processing (Ollama)**
 - **Model**: `google/gemma-3-4b`
 - **Speed**: Approximately 27 seconds on average.
 - **Quality**: Provides a good, thought slower, foundational naming.
-- **Cost**: Free, once the local arrangement is established.
+- **Cost**: Free.
+
+This utility is designed to be shared. Here are a few notes for those who wish to distribute it or contribute to its development.
+
+**Distribution Options**
+
+*   **GitHub Repoe, once the local arrangement is established.
 
 **Built with help from Claude Code, Roo Code and Gemini 2.5 pro**
