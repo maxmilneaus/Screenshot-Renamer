@@ -16,13 +16,20 @@ If you wish to use a cloud-based AI like Google Gemini, you must first acquire a
 
 **2. Install the Utility**
 
-Invite the utility's source code to your local machine and install its dependencies.
+You can install this utility directly from npm, or by cloning the repository.
 
-```bash
-git clone https://github.com/LilSizzles/screenshot-renamer.git
-cd screenshot-renamer
-npm install
-```
+*   **Method A: Install from npm (Recommended)**
+    ```bash
+    npm install -g screenshot-renamer
+    ```
+
+*   **Method B: Install from GitHub**
+    Invite the utility's source code to your local machine and install its dependencies.
+    ```bash
+    git clone https://github.com/maxmilneaus/Screenshot-Renamer.git
+    cd Screenshot-Renamer
+    npm install
+    ```
 
 **3. Configure the Utility**
 
