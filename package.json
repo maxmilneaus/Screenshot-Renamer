@@ -14,7 +14,8 @@
     "test:env": "node scripts/test-env.js",
     "install-service": "node src/cli.js install-service",
     "uninstall-service": "node src/cli.js uninstall-service",
-    "batch-rename": "node src/batch-renamer.js"
+    "batch-rename": "node src/batch-renamer.js",
+    "batch-setup": "node src/batch-setup.js"
   },
   "keywords": [
     "image",
