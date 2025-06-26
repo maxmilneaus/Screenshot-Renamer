@@ -13,7 +13,8 @@
     "test": "node test-performance.js",
     "test:env": "node scripts/test-env.js",
     "install-service": "node src/cli.js install-service",
-    "uninstall-service": "node src/cli.js uninstall-service"
+    "uninstall-service": "node src/cli.js uninstall-service",
+    "batch-rename": "node src/batch-renamer.js"
   },
   "keywords": [
     "image",
